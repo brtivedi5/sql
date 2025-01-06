@@ -216,12 +216,17 @@ VALUES (
 HINT: If you don't specify a WHERE clause, you are going to have a bad time.*/
 
 DELETE FROM product_units
-WHERE
-  product_name = 'Apple Pie' 
-  AND product_category_id = 16 
-  AND product_qty_type = 'unit';
-
-SELECT* FROM product_units
+WHERE product_name = 'Apple Pie'
+  AND product_category_id = 16
+  AND product_qty_type = 'unit'
+  AND snapshot_timestamp = (
+    SELECT MIN(snapshot_timestamp)  -- Find the earliest timestamp for this product
+    FROM product_units
+    WHERE product_name = 'Apple Pie'
+      AND product_category_id = 16
+      AND product_qty_type = 'unit'
+  );
+  SELECT* FROM product_units;
 
 -- UPDATE
 /* 1.We want to add the current_quantity to the product_units table. 
